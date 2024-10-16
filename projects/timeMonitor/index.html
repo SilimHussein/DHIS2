@@ -12,26 +12,35 @@
 
         <!-- Activity Input Form-->
         <form id="activityForm">
+            <label for="time">Time Slot:</label>
+            <select id="time">
+                <!-- Time slots will go here -->
+            </select>
+
             <label for="activity">Activity</label>
-            <input type="text" id="activity" name="activity" placeholder="Enter your activity..." required>
+            <input type="text" id="activity" placeholder="Enter your activity..." required>
             
             <label for="duration">Duration (in minutes)</label>
-            <input type="number" id="duration" name="duration" placeholder="Enter duration..." required>
+            <input type="number" id="duration" placeholder="15" value="15" min="15" max="15" required>
 
             <button type="submit">Add Activity</button>
         </form>
 
-        <!-- Placeholder for activity Log-->
-        <h2>Activity Log</h2>
-        <ul id="activitylog"></ul>
 
-        <!--Placeholder for future Charts and Reports -->
-        <h2>Reports</h2>
-        <div id="reports">
-            <p>No reports yet!</p>
-        </div>
+        <h2> Day's Activities (15-Minute Intervals)</h2>
+        <table id="timeTable">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Activity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- JavaScript will populate the rows here-->
+            </tbody>
+        </table>
 
-        <!-- Link to external JavaScript file-->
+        <ul id="activityLog"></ul>
         <script src="app.js"></script>
     </body>
 </html>
