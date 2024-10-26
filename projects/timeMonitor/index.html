@@ -10,22 +10,6 @@
     <body>
         <h1>Time Monitor</h1>
 
-        <!-- Activity Input Form
-        <form id="activityForm">
-            <label for="time">Time Slot:</label>
-            <select id="time">
-                ime slots will go here
-            </select>
-
-            <label for="activity">Activity</label>
-            <input type="text" id="activity" placeholder="Enter your activity..." required>
-            
-            <label for="duration">Duration (in minutes)</label>
-            <input type="number" id="duration" placeholder="15" value="15" min="15" max="15" required>
-
-            <button type="submit">Add Activity</button>
-        </form>
-        -->
         <form id="activityForm">
             <label for="startTimeSlot">Start Time:</label>
             <select id="startTimeSlot" required></select>
@@ -42,13 +26,13 @@
             <button type="submit">Add Activity</button>
         </form>
         
-
-        <h2> Day's Activities (15-Minute Intervals)</h2>
+        <h2>Day's Activities (15-Minute Intervals)</h2>
         <table id="timeTable">
             <thead>
                 <tr>
                     <th>Time</th>
                     <th>Activity</th>
+                    <th>Category</th> <!-- New Category Column -->
                 </tr>
             </thead>
             <tbody>

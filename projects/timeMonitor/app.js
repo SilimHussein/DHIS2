@@ -1,26 +1,46 @@
-// Populate the dropdowns with 15-minute intervals from 00:00 to 23:45
+// Categories and keywords dictionary
+const categories = {
+    Meals: ["breakfast", "lunch", "dinner", "snack", "tea", "coffee" ,"eat"],
+    Travel: ["walk", "bike", "transport", "drive", "commute"],
+    Work: ["meeting", "email", "coding", "code", "project", "research"],
+    Sleep: ["sleep", "nap" , "dozed", "dozed",],
+    Exercise: ["gym", "run", "yoga", "swim", "workout"],
+    Leisure: ["movie", "game", "read", "relax", "tv"],
+};
+
+// Function to categorize activities based on keywords
+function categorizeActivity(activity) {
+    for (const [category, keywords] of Object.entries(categories)) {
+        for (const keyword of keywords) {
+            if (activity.toLowerCase().includes(keyword)) {
+                return category;
+            }
+        }
+    }
+    return "Other"; // Default category if no match is found
+}
+
+// Function to populate time dropdowns with 15-minute intervals
 function populateTimeDropdowns() {
-    const startTimeSlot = document.getElementById('startTimeSlot');
-    const endTimeSlot = document.getElementById('endTimeSlot');
+    const startTimeDropdown = document.getElementById('startTimeSlot');
+    const endTimeDropdown = document.getElementById('endTimeSlot');
 
     for (let hour = 0; hour < 24; hour++) {
         for (let minute = 0; minute < 60; minute += 15) {
-            const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-            const startOption = document.createElement('option');
-            startOption.value = time;
-            startOption.textContent = time;
+            const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+            const optionStart = new Option(timeString, timeString);
+            const optionEnd = new Option(timeString, timeString);
 
-            const endOption = startOption.cloneNode(true); // Clone for independent selection
-            startTimeSlot.appendChild(startOption);
-            endTimeSlot.appendChild(endOption);
+            startTimeDropdown.add(optionStart);
+            endTimeDropdown.add(optionEnd);
         }
     }
 }
 
-// Call this function on page load to fill the dropdowns
+// Call the function to populate dropdowns
 populateTimeDropdowns();
 
-// Handle form submission to log activity across selected time range
+// Form submission to log activity with category
 document.getElementById('activityForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -29,37 +49,37 @@ document.getElementById('activityForm').addEventListener('submit', function(even
     const activity = document.getElementById('activity').value;
     const duration = document.getElementById('duration').value;
 
-    // Check if end time is after start time
     if (new Date(`1970-01-01T${startTime}:00`) >= new Date(`1970-01-01T${endTime}:00`)) {
         alert("End time must be later than start time.");
         return;
     }
 
-    // Parse start and end times into Date objects for easier manipulation
+    // Determine category of the activity
+    const category = categorizeActivity(activity);
+
     const start = new Date(`1970-01-01T${startTime}:00`);
     const end = new Date(`1970-01-01T${endTime}:00`);
     const timeTableBody = document.querySelector('#timeTable tbody');
 
-    // Loop through each 15-minute interval between start and end times
     while (start < end) {
         const timeSlot = `${String(start.getHours()).padStart(2, '0')}:${String(start.getMinutes()).padStart(2, '0')}`;
 
-        // Create a new row in the time table for each 15-minute interval
         const row = document.createElement('tr');
         const timeCell = document.createElement('td');
         const activityCell = document.createElement('td');
-        
+        const categoryCell = document.createElement('td'); // New cell for category
+
         timeCell.textContent = timeSlot;
         activityCell.textContent = `${activity} (${duration} min)`;
+        categoryCell.textContent = category; // Display the category
 
         row.appendChild(timeCell);
         row.appendChild(activityCell);
+        row.appendChild(categoryCell); // Add category cell to row
         timeTableBody.appendChild(row);
 
-        // Increment start time by 15 minutes for next interval
         start.setMinutes(start.getMinutes() + 15);
     }
 
-    // Clear the form fields after logging activity
     document.getElementById('activityForm').reset();
 });
