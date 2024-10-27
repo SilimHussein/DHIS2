@@ -1,85 +1,101 @@
-// Categories and keywords dictionary
-const categories = {
-    Meals: ["breakfast", "lunch", "dinner", "snack", "tea", "coffee" ,"eat"],
-    Travel: ["walk", "bike", "transport", "drive", "commute"],
-    Work: ["meeting", "email", "coding", "code", "project", "research"],
-    Sleep: ["sleep", "nap" , "dozed", "dozed",],
-    Exercise: ["gym", "run", "yoga", "swim", "workout"],
-    Leisure: ["movie", "game", "read", "relax", "tv"],
+// Get references to form and table elements
+const startTimeSlot = document.getElementById("startTimeSlot");
+const endTimeSlot = document.getElementById("endTimeSlot");
+const dateInput = document.getElementById("dateInput"); // for date picker
+const activityInput = document.getElementById("activity");
+const durationInput = document.getElementById("duration");
+const activityLog = document.getElementById("activityLog");
+const timeTable = document.getElementById("timeTable").getElementsByTagName("tbody")[0];
+
+// Initialize a dictionary for category learning
+let categoryDictionary = {
+    "meals": ["breakfast", "lunch", "dinner", "coffee", "tea"],
+    "travel": ["walk", "bike", "drive", "bus", "train"],
+    "work": ["meeting", "coding", "project", "planning"],
 };
 
-// Function to categorize activities based on keywords
-function categorizeActivity(activity) {
-    for (const [category, keywords] of Object.entries(categories)) {
-        for (const keyword of keywords) {
-            if (activity.toLowerCase().includes(keyword)) {
-                return category;
-            }
-        }
-    }
-    return "Other"; // Default category if no match is found
-}
-
-// Function to populate time dropdowns with 15-minute intervals
-function populateTimeDropdowns() {
-    const startTimeDropdown = document.getElementById('startTimeSlot');
-    const endTimeDropdown = document.getElementById('endTimeSlot');
+// Populate time slot options for 24 hours in 15-minute intervals
+function populateTimeSlots() {
+    startTimeSlot.innerHTML = ""; // Clear existing options
+    endTimeSlot.innerHTML = "";   // Clear existing options
 
     for (let hour = 0; hour < 24; hour++) {
         for (let minute = 0; minute < 60; minute += 15) {
-            const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-            const optionStart = new Option(timeString, timeString);
-            const optionEnd = new Option(timeString, timeString);
+            const timeString = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+            const optionStart = document.createElement("option");
+            const optionEnd = document.createElement("option");
 
-            startTimeDropdown.add(optionStart);
-            endTimeDropdown.add(optionEnd);
+            optionStart.value = timeString;
+            optionEnd.value = timeString;
+            optionStart.textContent = timeString;
+            optionEnd.textContent = timeString;
+
+            startTimeSlot.appendChild(optionStart);
+            endTimeSlot.appendChild(optionEnd);
         }
     }
 }
+populateTimeSlots();
 
-// Call the function to populate dropdowns
-populateTimeDropdowns();
+// Function to determine the category of an activity
+function categorizeActivity(activity) {
+    for (const category in categoryDictionary) {
+        if (categoryDictionary[category].some(keyword => activity.toLowerCase().includes(keyword))) {
+            return category;
+        }
+    }
+    return "other"; // default category if none matches
+}
 
-// Form submission to log activity with category
-document.getElementById('activityForm').addEventListener('submit', function(event) {
+// Function to allow the system to learn new categories
+function learnCategory(activity, category) {
+    if (!categoryDictionary[category]) {
+        categoryDictionary[category] = [];
+    }
+    categoryDictionary[category].push(activity.toLowerCase());
+}
+
+// Function to add an activity to the time log and table
+function logActivity(date, startTime, endTime, activity, duration, category) {
+    const row = timeTable.insertRow();
+    row.insertCell(0).textContent = `${date} ${startTime} - ${endTime}`;
+    row.insertCell(1).textContent = activity;
+    row.insertCell(2).textContent = category;
+
+    const logItem = document.createElement("li");
+    logItem.textContent = `${date} ${startTime} - ${endTime}: ${activity} (${category}), Duration: ${duration} mins`;
+    activityLog.appendChild(logItem);
+}
+
+// Event listener for form submission
+document.getElementById("activityForm").addEventListener("submit", function (event) {
     event.preventDefault();
 
-    const startTime = document.getElementById('startTimeSlot').value;
-    const endTime = document.getElementById('endTimeSlot').value;
-    const activity = document.getElementById('activity').value;
-    const duration = document.getElementById('duration').value;
+    const date = dateInput.value;
+    const startTime = startTimeSlot.value;
+    const endTime = endTimeSlot.value;
+    const activity = activityInput.value;
+    const duration = durationInput.value;
 
-    if (new Date(`1970-01-01T${startTime}:00`) >= new Date(`1970-01-01T${endTime}:00`)) {
-        alert("End time must be later than start time.");
-        return;
+    // Determine the category and add the activity to log
+    let category = categorizeActivity(activity);
+
+    // Log activity with categorized information
+    logActivity(date, startTime, endTime, activity, duration, category);
+
+    // Optionally learn new categories based on user input
+    if (category === "other") {
+        const userCategory = prompt(`What category would you like to assign to "${activity}"?`);
+        if (userCategory) {
+            learnCategory(activity, userCategory.toLowerCase());
+            category = userCategory.toLowerCase(); // Update category for current entry
+        }
     }
 
-    // Determine category of the activity
-    const category = categorizeActivity(activity);
-
-    const start = new Date(`1970-01-01T${startTime}:00`);
-    const end = new Date(`1970-01-01T${endTime}:00`);
-    const timeTableBody = document.querySelector('#timeTable tbody');
-
-    while (start < end) {
-        const timeSlot = `${String(start.getHours()).padStart(2, '0')}:${String(start.getMinutes()).padStart(2, '0')}`;
-
-        const row = document.createElement('tr');
-        const timeCell = document.createElement('td');
-        const activityCell = document.createElement('td');
-        const categoryCell = document.createElement('td'); // New cell for category
-
-        timeCell.textContent = timeSlot;
-        activityCell.textContent = `${activity} (${duration} min)`;
-        categoryCell.textContent = category; // Display the category
-
-        row.appendChild(timeCell);
-        row.appendChild(activityCell);
-        row.appendChild(categoryCell); // Add category cell to row
-        timeTableBody.appendChild(row);
-
-        start.setMinutes(start.getMinutes() + 15);
-    }
-
-    document.getElementById('activityForm').reset();
+    // Clear form inputs
+    dateInput.value = "";
+    activityInput.value = "";
+    durationInput.value = "";
+    startTimeSlot.selectedIndex = 0;
+    endTimeSlot.selectedIndex = 0;
 });
