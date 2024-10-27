@@ -1,46 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Time Monitor</title>
-        <!-- Link to the external CSS file -->
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <h1>Time Monitor</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Monitor</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file if you have one -->
+</head>
+<body>
+    <h1>Time Monitor</h1>
 
-        <form id="activityForm">
-            <label for="startTimeSlot">Start Time:</label>
-            <select id="startTimeSlot" required></select>
+    <!-- Activity Input Form -->
+    <form id="activityForm">
+        <label for="activityDate">Date:</label>
+        <input type="date" id="activityDate" required>
         
-            <label for="endTimeSlot">End Time:</label>
-            <select id="endTimeSlot" required></select>
+        <label for="startTimeSlot">Start Time:</label>
+        <select id="startTimeSlot" required></select>
         
-            <label for="activity">Activity:</label>
-            <input type="text" id="activity" required>
+        <label for="endTimeSlot">End Time:</label>
+        <select id="endTimeSlot" required></select>
         
-            <label for="duration">Duration (minutes):</label>
-            <input type="number" id="duration" required>
+        <label for="activity">Activity:</label>
+        <input type="text" id="activity" required>
         
-            <button type="submit">Add Activity</button>
-        </form>
+        <label for="duration">Duration (minutes):</label>
+        <input type="number" id="duration" required>
         
-        <h2>Day's Activities (15-Minute Intervals)</h2>
-        <table id="timeTable">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Activity</th>
-                    <th>Category</th> <!-- New Category Column -->
-                </tr>
-            </thead>
-            <tbody>
-                <!-- JavaScript will populate the rows here-->
-            </tbody>
-        </table>
+        <button type="submit">Add Activity</button>
+        <button type="button" id="resetButton">Reset</button> <!-- Reset button -->
+    </form>
 
-        <ul id="activityLog"></ul>
-        <script src="app.js"></script>
-    </body>
+    <!-- Table to Display Activities -->
+    <h2>Day's Activities (15-Minute Intervals)</h2>
+    <table id="timeTable">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Activity</th>
+                <th>Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- JavaScript will populate the rows here-->
+        </tbody>
+    </table>
+
+    <!-- Script linking to external JavaScript file -->
+    <script src="app.js"></script>
+</body>
 </html>
